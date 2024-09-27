@@ -79,7 +79,7 @@ function Register() {
     }
   };
   return (
-    <div className='bg-[url("/assets/register.png")] bg-cover bg-center text-white py-16 px-12'>
+    <div className='bg-[url("/assets/register.png")] bg-cover bg-center overflow-x-hidden text-white py-16 px-12'>
       <h2 className="text-center font-bold text-[42px] mb-8">Register</h2>
       <form
         onSubmit={handleSubmit}
