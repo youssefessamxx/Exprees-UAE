@@ -12,13 +12,13 @@ function AppNav() {
 
   return (
     <div>
-      <header className="bg-black text-white  md:text-[.8rem] xl:text-xl  font-bold">
+      <header className="bg-black text-white  md:text-[.8rem] xl:text-xl    font-bold">
         <nav className="flex items-center justify-between  w-[98.5%] mx-auto py-1">
-          <a href="/">
+          <a href="/" className="z-10">
             <img src={logo} alt="" />
           </a>
           <div
-            className={`md:static md:min-h-fit md:w-auto absolute bg-black min-h-[50vh] left-0 ${
+            className={`md:static md:min-h-fit md:w-auto absolute md:pt-4 pt-12 pb-5  bg-black min-h-[50vh] left-0 ${
               showMenu ? "top-[17%]" : "top-[-100%]"
             } w-full flex items-center px-5 `}
           >
@@ -70,7 +70,7 @@ function AppNav() {
               </li>
             </ul>
           </div>
-          <div className="flex items-center md:gap-4 gap-2">
+          <div className="flex items-center md:gap-4 gap-2 z-10">
             {!isAuthenticated && (
               <div className="flex gap-3">
                 <Link

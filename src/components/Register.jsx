@@ -50,6 +50,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(JSON.stringify(formData));
     // clear previous error
     setError("");
 
@@ -58,36 +59,44 @@ function Register() {
       return;
     }
 
-    navigate("/login");
+    // navigate("/login");
 
     try {
-      const res = await fetch("127.0.0.1:8000/core/register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://rawiaa.pythonanywhere.com/core/register/",
+        {
+          mode: "no-cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            charset: "utf-8",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      await res.json();
+      const data = await res.json();
 
       if (res.ok) {
-        console.log("register successfully");
+        console.log("register successfully" + data);
+        navigate("/login");
       }
     } catch (err) {
       console.error("Error submitting registration: " + err);
     }
   };
   return (
-    <div className='bg-[url("/assets/register.png")] bg-cover bg-center overflow-x-hidden text-white py-16 px-12'>
-      <h2 className="text-center font-bold text-[42px] mb-8">Register</h2>
+    <div className='bg-[url("/assets/register.png")] bg-cover bg-center overflow-x-hidden  py-16 px-12'>
+      <h2 className="text-center font-bold text-[42px] mb-8 text-white">
+        Register
+      </h2>
       <form
         onSubmit={handleSubmit}
         className="grid  grid-cols-1 lg:grid-cols-2 justify-items-center lg:justify-items-start "
       >
         <div className="">
           <div>
-            <label className="font-semibold text-xl mb-2 block">
+            <label className="font-semibold text-white text-xl mb-2 block">
               Full Name
             </label>
             <input
@@ -101,7 +110,9 @@ function Register() {
             />
           </div>
           <div>
-            <label className="font-semibold text-xl mb-2 block">Email</label>
+            <label className="font-semibold text-white text-xl mb-2 block">
+              Email
+            </label>
             <input
               className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
               type="email"
@@ -113,12 +124,12 @@ function Register() {
             />
           </div>
           <div>
-            <label className="font-semibold text-xl mb-2 block">
+            <label className="font-semibold text-white text-xl mb-2 block">
               Phone Number
             </label>
             <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5"
-              type="number"
+              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
+              type="text"
               placeholder="Phone"
               name="phone_number"
               value={formData.phone_number}
@@ -128,26 +139,33 @@ function Register() {
           </div>
         </div>
         <div>
-          <div>
-            <label className="font-semibold text-xl mb-2 block">Image</label>
+          <div className="relative">
+            <label className="font-semibold text-white text-xl mb-2 block">
+              Image
+            </label>
             <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5"
+              className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5 "
               type="url"
               placeholder="Image"
             />
-            {/* <input className='block px-4 py-2 w-[500px] outline- mb-5' type="file" className={styles.inputFile} /> */}
-            <label className="font-semibold text-xl mb-2  hidden">
+            {/* <input
+              className="block px-4 py-2 w-[500px] outline- mb-5"
+              type="file"
+            />{" "} */}
+            <label className="absolute top-[39px] right-[10px] z-10 bg-white text-xm cursor-pointer text-[#f05b1f] py-1 px-2 border border-[#f05b1f] ">
               <input
-                className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5"
+                className=" px-4 py-2 w-[300px] md:w-[400px] outline- mb-5 hidden"
                 type="file"
               />
               Select the image
             </label>
           </div>
           <div>
-            <label className="font-semibold text-xl mb-2 block">Paswword</label>
+            <label className="font-semibold text-white text-xl mb-2 block">
+              Paswword
+            </label>
             <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5"
+              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
               type="password"
               placeholder="Password"
               name="password"
@@ -157,11 +175,11 @@ function Register() {
             />
           </div>
           <div>
-            <label className="font-semibold text-xl mb-2 block">
+            <label className="font-semibold text-white text-xl mb-2 block">
               Confirm Password
             </label>
             <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5"
+              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -172,11 +190,11 @@ function Register() {
         <div>
           <button
             type="submit"
-            className="bg-[#F05B1F] mx-auto block lg:mx-0 w-[300px] md:w-[400px] px-4 py-2 font-bold mt-5 mb-10"
+            className="text-white bg-[#F05B1F] mx-auto block lg:mx-0 w-[300px] md:w-[400px] px-4 py-2 font-bold mt-5 mb-10"
           >
             Register
           </button>
-          <p className="w-[400px] text-center text-lg">
+          <p className="w-[400px] text-center text-lg text-white">
             Already have an account ?
             <span>
               {" "}

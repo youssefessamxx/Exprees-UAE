@@ -26,13 +26,18 @@ function Login() {
       login();
     }
 
-    navigate("/");
+    console.log(JSON.stringify(formData));
+
+    // navigate("/");
 
     try {
-      const res = await fetch("127.0.0.1:8000/core/login/", {
+      const res = await fetch("https://rawiaa.pythonanywhere.com/core/login/", {
+        mode: "no-cors",
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          charset: "utf-8",
         },
         body: JSON.stringify(formData),
       });
@@ -41,21 +46,24 @@ function Login() {
 
       if (res.ok) {
         console.log("login successfully");
+        navigate("/");
       }
     } catch (err) {
       console.error("Error submitting login: " + err);
     }
   };
   return (
-    <div className='bg-[url("/assets/login.jpg")] bg-cover bg-center text-white py-9 px-8 md:px-12'>
-      <h2 className="text-center font-bold text-[32px] mb-4">Log in</h2>
+    <div className='bg-[url("/assets/login.jpg")] bg-cover bg-center  py-9 px-8 md:px-12'>
+      <h2 className="text-center font-bold text-[32px] mb-4 text-white">
+        Log in
+      </h2>
       <div className="flex justify-between gap-[200px] ">
         <form
           onSubmit={handleSubmit}
           className="flex-grow flex flex-col md:gap-5 gap-3 md:self-center"
         >
           <div>
-            <label className="font-[500] lg:text-[25px] mb-[2px] block">
+            <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
               Email
             </label>
             <input
@@ -69,7 +77,7 @@ function Login() {
             />
           </div>
           <div>
-            <label className="font-[500] lg:text-[25px] mb-[2px] block">
+            <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
               Password
             </label>
             <input
@@ -89,7 +97,7 @@ function Login() {
           >
             Log in
           </button>
-          <p className="text-center md:text-xl">
+          <p className="text-center md:text-xl text-white">
             Dont have account ?{" "}
             <Link className="font-bold text-[#F05B1F]" to="/register">
               Register
