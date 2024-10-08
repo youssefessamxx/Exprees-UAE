@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -62,27 +63,24 @@ function Register() {
     // navigate("/login");
 
     try {
-      const res = await fetch(
+      const response = await axios.post(
         "https://rawiaa.pythonanywhere.com/core/register/",
+        formData, // axios will automatically convert it to JSON
         {
-          mode: "no-cors",
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
-            charset: "utf-8",
           },
-          body: JSON.stringify(formData),
         }
       );
 
-      const data = await res.json();
-
-      if (res.ok) {
-        console.log("register successfully" + data);
-        navigate("/login");
+      // Handle success
+      if (response.status === 201) {
+        console.log("Registered successfully", response.data);
+        navigate("/otp");
       }
     } catch (err) {
-      console.error("Error submitting registration: " + err);
+      console.error("Error submitting registration:", err);
+      setError("Registration failed. Please try again.");
     }
   };
   return (

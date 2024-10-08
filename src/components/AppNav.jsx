@@ -3,12 +3,44 @@ import { IoMenu } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 
 import logo from "../../public/assets/logo.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/Auth";
+import axios from "axios";
 
 function AppNav() {
   const [showMenu, setShowMenu] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const { isAuthenticated, logout } = useAuth();
+
+  const username = userProfile?.full_name;
+  const userimg = userProfile?.full_name[0].toUpperCase();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+
+        if (!isAuthenticated) {
+          throw new Error("User not logged in");
+        }
+
+        const res = await axios.get(
+          "https://rawiaa.pythonanywhere.com/core/profile/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Include the token in the header
+            },
+          }
+        );
+
+        setUserProfile(res.data);
+      } catch (e) {
+        throw new Error(e.message);
+      }
+    };
+
+    fetchProfile();
+  }, [userProfile]);
 
   return (
     <div>
@@ -18,11 +50,11 @@ function AppNav() {
             <img src={logo} alt="" />
           </a>
           <div
-            className={`md:static md:min-h-fit md:w-auto absolute md:pt-4 pt-12 pb-5  bg-black min-h-[50vh] left-0 ${
+            className={`lg:static lg:min-h-fit lg:w-auto absolute lg:pt-4 pt-12 pb-5  bg-black min-h-[50vh] left-0 ${
               showMenu ? "top-[17%]" : "top-[-100%]"
             } w-full flex items-center px-5 `}
           >
-            <ul className="flex md:flex-row flex-col md:items-center md:gap-7 gap-4">
+            <ul className="flex lg:flex-row flex-col lg:items-center md:gap-7 gap-4">
               <li>
                 <a className="hover:text-gray-400 transi duration-300" href="/">
                   Home
@@ -87,18 +119,24 @@ function AppNav() {
                 </Link>
               </div>
             )}
-            {isAuthenticated && <Link onClick={() => logout()}>Logout</Link>}
+            {/* {isAuthenticated && <Link onClick={() => logout()}>Logout</Link>} */}
+            {isAuthenticated && (
+              <div className="flex gap-3 items-center">
+                <p className="bg-[#F05B1F] p-1  rounded-full ">{userimg}</p>
+                <p>{username}</p>
+              </div>
+            )}
 
             <p>En🌐</p>
             {!showMenu && (
               <IoMenu
-                className="md:hidden cursor-pointer"
+                className="lg:hidden cursor-pointer"
                 onClick={() => setShowMenu(true)}
               />
             )}
             {showMenu && (
               <IoClose
-                className="md:hidden cursor-pointer"
+                className="lg:hidden cursor-pointer"
                 onClick={() => setShowMenu(false)}
               />
             )}

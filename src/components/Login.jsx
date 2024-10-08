@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/Auth";
 import { useState } from "react";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -31,25 +32,26 @@ function Login() {
     // navigate("/");
 
     try {
-      const res = await fetch("https://rawiaa.pythonanywhere.com/core/login/", {
-        mode: "no-cors",
+      const response = await axios.post(
+        "https://rawiaa.pythonanywhere.com/core/login/",
+        formData, // axios will automatically convert it to JSON
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          charset: "utf-8",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      await res.json();
-
-      if (res.ok) {
-        console.log("login successfully");
+      // Handle success
+      if (response.status === 200 || response.status === 201) {
+        console.log("login successfully", response.data);
         navigate("/");
+        const token = response.data.access;
+        console.log();
+        localStorage.setItem("authToken", token);
       }
     } catch (err) {
-      console.error("Error submitting login: " + err);
+      console.error("Error logging in registration:", err);
     }
   };
   return (
@@ -90,7 +92,9 @@ function Login() {
               required
             />
           </div>
-          <p className="text-right text-[#F05B1F] font-bold">Forget Password</p>
+          <Link to="/forgot" className="text-right text-[#F05B1F] font-bold">
+            Forget Password
+          </Link>
           <button
             className="bg-[#F05B1F] md:text-xl font-bold cursor-pointer px-3 py-1 rounded-[8px] lg:py-3 lg:px-7 text-white"
             type="submit"

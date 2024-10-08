@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/Auth";
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
+import axios from "axios";
 
 function Quotation() {
   const { isAuthenticated } = useAuth();
@@ -87,21 +88,30 @@ function Quotation() {
       return;
     }
 
-    try {
-      const res = await fetch("127.0.0.1:8000/shipping/shipping-request/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      setShowModal(true);
-      handleCancel();
+    console.log(formData);
 
-      if (res.ok) {
-        // eslint-disable-next-line no-unused-vars
-        const data = await res.json();
+    const token = localStorage.getItem("authToken");
+    try {
+      const response = await axios.post(
+        "https://rawiaa.pythonanywhere.com/shipping/shipping-request/",
+        formData, // axios will automatically convert it to JSON
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Handle success
+      if (response.status === 201) {
+        console.log("guotation successfully", response.data);
+        setShowModal(true);
+        handleCancel();
       }
-    } catch (e) {
-      console.error("Error submitting form data: ", e);
+    } catch (err) {
+      console.error("Error submitting guotation:", err);
+      setError("guotation failed. Please try again.");
     }
   };
 
