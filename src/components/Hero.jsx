@@ -2,7 +2,7 @@ import Swiper from "./Swiper";
 
 function Hero() {
   return (
-    <div className="bg-[url('assets/Hero.png')]  h-[600px] w-full bg-cover bg-center text-white flex items-center px-16 ">
+    <div className="bg-[url('static/images/Hero.png')]  h-[600px] w-full bg-cover bg-center text-white flex items-center px-16 ">
       <div className="text-center md:text-left">
         <h1 className="md:text-[32px] lg:text-[42px] text-[30px] font-[800] mb-5">
           Welcome{" "}

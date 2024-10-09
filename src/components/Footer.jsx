@@ -10,7 +10,7 @@ function Footer() {
     <div className="text-white bg-black   grid grid-cols-1 sm:grid-cols-2 text-center md:text-left  lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.5fr] gap-8 px-14 py-10 lg:gap-4">
       <div>
         <img
-          src="../../public/assets/logo.png"
+          src="../../public/static/images/logo.png"
           className=" mx-auto md:mx-0 w-[200px]"
           alt=""
         />
@@ -86,12 +86,12 @@ function Footer() {
         <h2 className="font-bold text-[25px] mb-1">Download the app by :</h2>
         <span className="h-[1px] w-[100px] bg-[#F05B1F] md:mx-0 mx-auto mb-3 block"></span>
         <img
-          src="../../public/assets/google-store.png"
+          src="../../public/static/images/google-store.png"
           alt=""
           className="mb-4 mx-auto md:mx-0 "
         />
         <img
-          src="../../public/assets/app-store.png"
+          src="../../public/static/images/app-store.png"
           className="mb-4 mx-auto md:mx-0 "
           alt=""
         />

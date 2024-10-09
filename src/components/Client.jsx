@@ -7,10 +7,10 @@ function Client() {
         Our Client Say!
       </h2>
       <div className="flex gap-2 flex-wrap justify-center">
-        <img src="../../public/assets/client-1.png" alt="" />
-        <img src="../../public/assets/client-2.png" alt="" />
-        <img src="../../public/assets/client-3.png" alt="" />
-        <img src="../../public/assets/client-4.png" alt="" />
+        <img src="../../public/static/images/client-1.png" alt="" />
+        <img src="../../public/static/images/client-2.png" alt="" />
+        <img src="../../public/static/images/client-3.png" alt="" />
+        <img src="../../public/static/images/client-4.png" alt="" />
       </div>
       <Swiper />
     </div>

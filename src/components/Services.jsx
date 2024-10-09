@@ -6,17 +6,17 @@ function Services() {
       </h1>
       <div className="flex flex-col md:flex-row gap-2 lg:gap-3">
         <img
-          src="../../public/assets/service_1.png"
+          src="../../public/static/images/service_1.png"
           className="md:w-1/3  object-cover"
           alt=""
         />
         <img
-          src="../../public/assets/service_2.png"
+          src="../../public/static/images/service_2.png"
           className="md:w-1/3  object-cover"
           alt=""
         />
         <img
-          src="../../public/assets/service_3.png"
+          src="../../public/static/images/service_3.png"
           className="md:w-1/3  object-cover"
           alt=""
         />

@@ -40,7 +40,7 @@ export function AccordionItem({ children, value, trigger, ...props }) {
         // }`}
         style={{ height: open ? ref.current?.offsetHeight || 0 : 0 }}
       >
-        <div className="p-2  border-t-[1px] mt-2 border-white" ref={ref}>
+        <div className="  border-t-[1px] mt-2 border-white" ref={ref}>
           {children}
         </div>
       </div>

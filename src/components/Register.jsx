@@ -84,7 +84,7 @@ function Register() {
     }
   };
   return (
-    <div className='bg-[url("/assets/register.png")] bg-cover bg-center overflow-x-hidden  py-16 px-12'>
+    <div className='bg-[url("/public/static/images/register.png")] bg-cover bg-center overflow-x-hidden  py-16 px-12'>
       <h2 className="text-center font-bold text-[42px] mb-8 text-white">
         Register
       </h2>

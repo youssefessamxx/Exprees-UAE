@@ -138,7 +138,7 @@ function Contact() {
         </form>
 
         <img
-          src="../../public/assets/contact.png"
+          src="../../public/static/images/contact.png"
           className="w-1/2 hidden lg:block"
           alt=""
         />

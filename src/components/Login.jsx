@@ -55,7 +55,7 @@ function Login() {
     }
   };
   return (
-    <div className='bg-[url("/assets/login.jpg")] bg-cover bg-center  py-9 px-8 md:px-12'>
+    <div className='bg-[url("/public/static/images/login.jpg")] h-[60vh] bg-cover bg-center  py-9 px-8 md:px-12'>
       <h2 className="text-center font-bold text-[32px] mb-4 text-white">
         Log in
       </h2>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 
-import logo from "../../public/assets/logo.png";
+import logo from "../../public/static/images/logo.png";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/Auth";
 import axios from "axios";
