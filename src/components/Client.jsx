@@ -8,7 +8,7 @@ function Client() {
       </h2>
       <div className="flex gap-2 flex-wrap justify-center">
         <img
-          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659797/team-4_g4vx5k.png"
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659867/client-1_z1z7tu.png"
           alt=""
         />
         <img
