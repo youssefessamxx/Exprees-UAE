@@ -6,7 +6,7 @@ function Client() {
       <h2 className="font-semibold text-[30px] md:text-[35px] lg:text-[40px] text-[#F05B1F] mb-7 mt-3">
         Our Client Say!
       </h2>
-      <div className="flex gap-2 flex-wrap justify-center">
+      <div className="grid grid-cols-1  sm:grid-cols-2  md:grid-cols-4 gap-4">
         <img
           src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659867/client-1_z1z7tu.png"
           alt=""
