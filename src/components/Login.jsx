@@ -63,7 +63,7 @@ function Login() {
     }
   };
   return (
-    <div className='bg-[url("/public/static/images/login.jpg")]  bg-cover bg-center  py-[100px] px-8 md:px-12'>
+    <div className='bg-[url("https://res.cloudinary.com/dqsruh1bz/image/upload/v1728660153/login_kofjvl.jpg")]  bg-cover bg-center  py-[100px] px-8 md:px-12'>
       <h2 className="text-center font-bold text-[32px] mb-4 text-white">
         Log in
       </h2>

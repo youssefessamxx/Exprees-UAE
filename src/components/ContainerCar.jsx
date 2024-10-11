@@ -20,7 +20,7 @@ function ContainerCar() {
       </div>
       <div className="p-2 lg:p-0  md:w-1/2">
         <img
-          src="../../public/static/images/container-car.png"
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659324/container-car_vcsnnw.png"
           alt=""
           className="rounded-[50px] lg:rounded-r-none w-full h-full "
         />

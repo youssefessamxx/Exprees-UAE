@@ -28,17 +28,17 @@ function Services() {
       </h1>
       <div className="flex flex-col md:flex-row gap-2 lg:gap-3">
         <img
-          src="../../public/static/images/service_1.png"
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659154/service_1_jnmyth.png"
           className="md:w-1/3  object-cover"
           alt=""
         />
         <img
-          src="../../public/static/images/service_2.png"
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659164/service_2_vbq6cb.png"
           className="md:w-1/3  object-cover"
           alt=""
         />
         <img
-          src="../../public/static/images/service_3.png"
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659173/service_3_jyemua.png"
           className="md:w-1/3  object-cover"
           alt=""
         />

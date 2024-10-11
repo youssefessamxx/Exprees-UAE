@@ -33,7 +33,7 @@ function Otp() {
   };
 
   return (
-    <div className='bg-[url("public/static/images/login.jpg")] bg-cover bg-center  py-9 px-8 md:px-12 h-[60vh]'>
+    <div className='bg-[url("https://res.cloudinary.com/dqsruh1bz/image/upload/v1728660153/login_kofjvl.jpg")] bg-cover bg-center  py-9 px-8 md:px-12 h-[60vh]'>
       <h2 className="text-center font-bold text-[32px] mb-4 text-white">
         Confirm Otp
       </h2>

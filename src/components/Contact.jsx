@@ -138,7 +138,7 @@ function Contact() {
         </form>
 
         <img
-          src="../../public/static/images/contact.png"
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659977/contact_qkn9y4.png"
           className="w-1/2 hidden lg:block"
           alt=""
         />

@@ -7,10 +7,22 @@ function Client() {
         Our Client Say!
       </h2>
       <div className="flex gap-2 flex-wrap justify-center">
-        <img src="../../public/static/images/client-1.png" alt="" />
-        <img src="../../public/static/images/client-2.png" alt="" />
-        <img src="../../public/static/images/client-3.png" alt="" />
-        <img src="../../public/static/images/client-4.png" alt="" />
+        <img
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659797/team-4_g4vx5k.png"
+          alt=""
+        />
+        <img
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659875/client-2_l9tnds.png"
+          alt=""
+        />
+        <img
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659883/client-3_fcd2tv.png"
+          alt=""
+        />
+        <img
+          src="https://res.cloudinary.com/dqsruh1bz/image/upload/v1728659890/client-4_gu631u.png"
+          alt=""
+        />
       </div>
       <Swiper />
     </div>
