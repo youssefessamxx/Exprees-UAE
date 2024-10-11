@@ -1,14 +1,14 @@
 // import Modal from "./Modal";
 
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/Auth";
-import { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/Auth";
+import { useState } from "react";
 import Modal from "./Modal";
 import axios from "axios";
 
 function Quotation() {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  // const { isAuthenticated } = useAuth();
+  // const navigate = useNavigate();
   // error
   const [error, setError] = useState("");
   // show modal
@@ -88,7 +88,7 @@ function Quotation() {
       return;
     }
 
-    console.log(formData);
+    console.log(JSON.stringify(formData));
 
     const token = localStorage.getItem("authToken");
     try {
@@ -115,13 +115,13 @@ function Quotation() {
     }
   };
 
-  useEffect(() => {
-    if (!isAuthenticated) navigate("/login", { replace: true });
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   if (!isAuthenticated) navigate("/login", { replace: true });
+  // }, [isAuthenticated]);
 
   return (
     <div>
-      <header className="bg-[url(/assets/quotation.png)] bg-cover bg-center h-[400px] flex items-center px-6">
+      <header className="bg-[url(/public/static/images/quotation.png)] bg-cover bg-center h-[400px] flex items-center px-6">
         <h2 className="font-bold text-4xl text-[#F05B1F]"> Get Quotation</h2>
       </header>
       <form onSubmit={handleSubmit} className=" p-4">

@@ -23,9 +23,9 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.email && formData.password) {
-      login();
-    }
+    // if (formData.email && formData.password) {
+    //   login();
+    // }
 
     console.log(JSON.stringify(formData));
 
@@ -46,16 +46,24 @@ function Login() {
       if (response.status === 200 || response.status === 201) {
         console.log("login successfully", response.data);
         navigate("/");
+        login();
+
         const token = response.data.access;
         console.log();
         localStorage.setItem("authToken", token);
       }
     } catch (err) {
-      console.error("Error logging in registration:", err);
+      if (err.response) {
+        console.error("Server responded with an error:", err.response.data);
+      } else if (err.request) {
+        console.error("No response from the server:", err.request);
+      } else {
+        console.error("Error setting up the request:", err.message);
+      }
     }
   };
   return (
-    <div className='bg-[url("/public/static/images/login.jpg")] h-[60vh] bg-cover bg-center  py-9 px-8 md:px-12'>
+    <div className='bg-[url("/public/static/images/login.jpg")]  bg-cover bg-center  py-[100px] px-8 md:px-12'>
       <h2 className="text-center font-bold text-[32px] mb-4 text-white">
         Log in
       </h2>
