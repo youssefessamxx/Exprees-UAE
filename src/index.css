@@ -1,6 +1,8 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 * {
   padding: 0;
@@ -11,6 +13,74 @@
 html {
   scroll-behavior: smooth;
 }
+.react-tel-input .form-control {
+  width: 100% !important;
+  border: 1px solid black !important;
+  outline: none !important;
+  padding: 8px 10px 8px 40px !important; /* Increase left padding for country code */
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.react-tel-input .flag-dropdown {
+  border: 1px solid black !important;
+  border-radius: 0 !important;
+}
+/* Services.css */
+
+.service-item .overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(4px); /* Adds a subtle blur for readability */
+}
+
+.service-item:hover .overlay {
+  opacity: 1;
+}
+
+.service-item img {
+  transition: transform 0.3s ease;
+}
+
+.service-item:hover img {
+  transform: scale(1.05);
+}
+
+.service-item h3 {
+  font-size: 1.75rem; /* Increase size for visibility */
+}
+
+.service-item p {
+  font-size: 1.125rem; /* Slightly larger description */
+  margin-top: 0.5rem;
+  text-align: center;
+}
+/* src/index.css */
+/* src/components/SplashScreen.css */
+.splash-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #ffffff; /* Adjust background color as needed */
+}
+
+.splash-logo {
+  width: 150px; /* Adjust logo size */
+  margin-bottom: 20px; /* Space between logo and spinner */
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+
+
+
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

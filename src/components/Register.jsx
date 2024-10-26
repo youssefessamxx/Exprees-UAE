@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
-  // Form data state
+
+  // State for form data, password confirmation, error messages, and password visibility
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -12,37 +14,35 @@ function Register() {
     password: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Toggle for password visibility
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // handle error
+  // Form validation function
   const validateForm = () => {
-    if (
-      !formData.full_name ||
-      !formData.email ||
-      !formData.phone_number ||
-      !formData.password
-    ) {
-      setError("please full the form");
-    }
+    const { full_name, email, phone_number, password } = formData;
 
-    if (!formData.email.includes("@")) {
-      setError("Invalid email address");
+    if (!full_name || !email || !phone_number || !password) {
+      toast.error("Please fill in all fields.");
       return false;
     }
-    if (formData.password < 6) {
-      setError("Password must be at least 6 characters");
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Invalid email address.");
+      return false;
     }
 
-    if (formData.password !== confirmPassword) {
-      setError("password do not match");
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return false;
     }
 
     return true;
@@ -50,137 +50,115 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(JSON.stringify(formData));
-    // clear previous error
-    setError("");
-
-    // validate form
-    if (!validateForm()) {
-      return;
-    }
-
-    // navigate("/login");
+    if (!validateForm()) return;
 
     try {
       const response = await axios.post(
-        "http://35.157.197.41/core/register/",
-        formData, // axios will automatically convert it to JSON
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        "http://51.20.121.157/core/register/",
+        formData,
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      // Handle success
       if (response.status === 201) {
-        console.log("Registered successfully", response.data);
-        navigate("/otp");
+        toast.success("Registered successfully! Redirecting to OTP verification...");
+        setTimeout(() => {
+          navigate("/otp");
+        }, 2000); // Redirect after a short delay
       }
     } catch (err) {
-      console.error("Error submitting registration:", err);
-      setError("Registration failed. Please try again.");
+      const apiError = err.response?.data;
+      console.error("Full error response:", apiError);
+
+      if (apiError?.errors) {
+        if (apiError.errors.email) {
+          toast.error("A user with this email already exists.");
+        } else if (apiError.errors.phone_number) {
+          toast.error("A user with this phone number already exists.");
+        } else {
+          toast.error("Registration failed due to invalid input.");
+        }
+      } else if (apiError?.message) {
+        toast.error(apiError.message);
+      } else {
+        toast.error("Registration failed. Please try again.");
+      }
+
+      console.error("Error submitting registration:", apiError || err.message);
     }
   };
+
   return (
-    <div className='bg-[url("/public/static/images/register.png")] bg-cover bg-center overflow-x-hidden  py-16 px-12'>
-      <h2 className="text-center font-bold text-[42px] mb-8 text-white">
-        Register
-      </h2>
+    <div className='bg-[url("/public/static/images/register.png")] bg-cover bg-center overflow-x-hidden py-16 px-12'>
+      <Toaster position="top-center" reverseOrder={false} />
+      <h2 className="text-center font-bold text-[42px] mb-8 text-white">Register</h2>
       <form
         onSubmit={handleSubmit}
-        className="grid  grid-cols-1 lg:grid-cols-2 justify-items-center lg:justify-items-start "
+        className="grid grid-cols-1 lg:grid-cols-2 justify-items-center lg:justify-items-start"
       >
-        <div className="">
-          <div>
-            <label className="font-semibold text-white text-xl mb-2 block">
-              Full Name
-            </label>
-            <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
-              type="text"
-              placeholder="Full Name"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="font-semibold text-white text-xl mb-2 block">
-              Email
-            </label>
-            <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
-              type="email"
-              placeholder="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="font-semibold text-white text-xl mb-2 block">
-              Phone Number
-            </label>
-            <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
-              type="text"
-              placeholder="Phone"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
+        {/* Left Column */}
         <div>
-          <div className="relative">
-            {/* <label className="font-semibold text-white text-xl mb-2 block">
-              Image
-            </label> */}
-            {/* <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5 "
-              type="url"
-              placeholder="Image"
-            /> */}
-            {/* <label className="absolute top-[39px] right-[10px] z-10 bg-white text-xm cursor-pointer text-[#f05b1f] py-1 px-2 border border-[#f05b1f] ">
+          <label className="font-semibold text-white text-xl mb-2 block">Full Name</label>
+          <input
+            className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
+            type="text"
+            placeholder="Full Name"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleChange}
+          />
+          <label className="font-semibold text-white text-xl mb-2 block">Email</label>
+          <input
+            className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <label className="font-semibold text-white text-xl mb-2 block">Phone Number</label>
+          <input
+            className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
+            type="text"
+            placeholder="Phone"
+            name="phone_number"
+            value={formData.phone_number}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Right Column */}
+        <div>
+          <label className="font-semibold text-white text-xl mb-2 block">Password</label>
+          <input
+            className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <label className="font-semibold text-white text-xl mb-2 block">Confirm Password</label>
+          <input
+            className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
+            type={showPassword ? "text" : "password"}
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          {/* Show Password Toggle */}
+          <div className="mb-5">
+            <label className="text-white text-md">
               <input
-                className=" px-4 py-2 w-[300px] md:w-[400px] outline- mb-5 hidden"
-                type="file"
-              />
-              Select the image
-            </label> */}
-          </div>
-          <div>
-            <label className="font-semibold text-white text-xl mb-2 block">
-              Paswword
+                type="checkbox"
+                checked={showPassword}
+                onChange={() => setShowPassword((prev) => !prev)}
+              />{" "}
+              Show Password
             </label>
-            <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="font-semibold text-white text-xl mb-2 block">
-              Confirm Password
-            </label>
-            <input
-              className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
           </div>
         </div>
+
+        {/* Submit Button and Error Message */}
         <div>
           <button
             type="submit"
@@ -189,21 +167,12 @@ function Register() {
             Register
           </button>
           <p className="w-[400px] text-center text-lg text-white">
-            Already have an account ?
-            <span>
-              {" "}
-              <Link to="/login" className="text-[#F05B1F] font-bold">
-                Log in
-              </Link>
-            </span>
+            Already have an account?{" "}
+            <Link to="/login" className="text-[#F05B1F] font-bold">Log in</Link>
           </p>
+          {/* Remove inline error message as it's replaced with toast notifications */}
         </div>
       </form>
-      {error && (
-        <p style={{ color: "red", textAlign: "center", fontSize: "2rem" }}>
-          {error}
-        </p>
-      )}
     </div>
   );
 }

@@ -2,39 +2,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/Auth";
 import { useState } from "react";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  // data from form
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (formData.email && formData.password) {
-    //   login();
-    // }
-
-    console.log(JSON.stringify(formData));
-
-    // navigate("/");
-
     try {
       const response = await axios.post(
-        "http://35.157.197.41/core/login/",
-        formData, // axios will automatically convert it to JSON
+        "http://51.20.121.157/core/login/",
+        formData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -42,28 +31,42 @@ function Login() {
         }
       );
 
-      // Handle success
       if (response.status === 200 || response.status === 201) {
-        console.log("login successfully", response.data);
-        navigate("/");
+        const { access, refresh } = response.data;
+        localStorage.setItem("authToken", access);
+        localStorage.setItem("refreshToken", refresh);
+
         login();
 
-        const token = response.data.access;
-        console.log();
-        localStorage.setItem("authToken", token);
+        toast.success("Login successful!", {
+          style: { background: "#4caf50", color: "white" },
+        });
+
+        navigate("/");
       }
     } catch (err) {
       if (err.response) {
+        toast.error("Login failed. Please check your email and password.", {
+          style: { background: "red", color: "white" },
+        });
         console.error("Server responded with an error:", err.response.data);
       } else if (err.request) {
+        toast.error("No response from the server. Please try again later.", {
+          style: { background: "red", color: "white" },
+        });
         console.error("No response from the server:", err.request);
       } else {
+        toast.error("An unexpected error occurred.", {
+          style: { background: "red", color: "white" },
+        });
         console.error("Error setting up the request:", err.message);
       }
     }
   };
+
   return (
-    <div className='bg-[url("https://res.cloudinary.com/dqsruh1bz/image/upload/v1728660153/login_kofjvl.jpg")]  bg-cover bg-center  py-[100px] px-8 md:px-12'>
+    <div className='bg-[url("https://res.cloudinary.com/dqsruh1bz/image/upload/v1728660153/login_kofjvl.jpg")] bg-cover bg-center py-[100px] px-8 md:px-12'>
+      <Toaster position="top-center" reverseOrder={false} />
       <h2 className="text-center font-bold text-[32px] mb-4 text-white">
         Log in
       </h2>
@@ -77,8 +80,8 @@ function Login() {
               Email
             </label>
             <input
-              className="border-[1px]  border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-              type="text"
+              className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
+              type="email"
               placeholder="Email"
               name="email"
               value={formData.email}
@@ -110,7 +113,7 @@ function Login() {
             Log in
           </button>
           <p className="text-center md:text-xl text-white">
-            Dont have account ?{" "}
+            Don't have an account?{" "}
             <Link className="font-bold text-[#F05B1F]" to="/register">
               Register
             </Link>
@@ -118,9 +121,9 @@ function Login() {
         </form>
 
         <img
-          src="../../public/assets/login-s.png"
+          src="/static/images/login-s.png"
           className="hidden lg:block md:w-1/2 lg:w-[595px] lg:mr-9"
-          alt=""
+          alt="Login Illustration"
         />
       </div>
     </div>
