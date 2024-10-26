@@ -9,7 +9,7 @@ function Forgot() {
 
     try {
       const response = await axios.post(
-        "https://rawiaa.pythonanywhere.com/core/forget-password/",
+        "http://35.157.197.41/core/forget-password/",
         email, // axios will automatically convert it to JSON
         {
           headers: {

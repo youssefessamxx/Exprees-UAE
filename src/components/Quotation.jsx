@@ -93,7 +93,7 @@ function Quotation() {
     const token = localStorage.getItem("authToken");
     try {
       const response = await axios.post(
-        "https://rawiaa.pythonanywhere.com/shipping/shipping-request/",
+        "http://35.157.197.41/shipping/shipping-request/",
         formData, // axios will automatically convert it to JSON
         {
           headers: {

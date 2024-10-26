@@ -13,7 +13,7 @@ function Otp() {
 
     try {
       const response = await axios.post(
-        "https://rawiaa.pythonanywhere.com/core/verify_otp/",
+        "http://35.157.197.41/core/verify_otp/",
         formData, // axios will automatically convert it to JSON
         {
           headers: {

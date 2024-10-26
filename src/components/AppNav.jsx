@@ -10,7 +10,7 @@ import axios from "axios";
 function AppNav() {
   const [showMenu, setShowMenu] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const username = userProfile?.full_name;
   const userimg = userProfile?.full_name[0].toUpperCase();
@@ -19,19 +19,17 @@ function AppNav() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("authToken");
+        console.log(token);
 
         if (!isAuthenticated) {
           throw new Error("User not logged in");
         }
 
-        const res = await axios.get(
-          "https://rawiaa.pythonanywhere.com/core/profile/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Include the token in the header
-            },
-          }
-        );
+        const res = await axios.get("http://35.157.197.41/core/profile/", {
+          headers: {
+            Authorization: `Bearer${token}`, // Include the token in the header
+          },
+        });
 
         setUserProfile(res.data);
       } catch (e) {

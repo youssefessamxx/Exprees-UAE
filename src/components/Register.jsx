@@ -64,7 +64,7 @@ function Register() {
 
     try {
       const response = await axios.post(
-        "https://rawiaa.pythonanywhere.com/core/register/",
+        "http://35.157.197.41/core/register/",
         formData, // axios will automatically convert it to JSON
         {
           headers: {
@@ -138,25 +138,21 @@ function Register() {
         </div>
         <div>
           <div className="relative">
-            <label className="font-semibold text-white text-xl mb-2 block">
+            {/* <label className="font-semibold text-white text-xl mb-2 block">
               Image
-            </label>
-            <input
+            </label> */}
+            {/* <input
               className="block px-4 py-2 w-[300px] md:w-[400px] outline- mb-5 "
               type="url"
               placeholder="Image"
-            />
-            {/* <input
-              className="block px-4 py-2 w-[500px] outline- mb-5"
-              type="file"
-            />{" "} */}
-            <label className="absolute top-[39px] right-[10px] z-10 bg-white text-xm cursor-pointer text-[#f05b1f] py-1 px-2 border border-[#f05b1f] ">
+            /> */}
+            {/* <label className="absolute top-[39px] right-[10px] z-10 bg-white text-xm cursor-pointer text-[#f05b1f] py-1 px-2 border border-[#f05b1f] ">
               <input
                 className=" px-4 py-2 w-[300px] md:w-[400px] outline- mb-5 hidden"
                 type="file"
               />
               Select the image
-            </label>
+            </label> */}
           </div>
           <div>
             <label className="font-semibold text-white text-xl mb-2 block">
