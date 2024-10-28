@@ -36,7 +36,7 @@ function Login() {
         localStorage.setItem("authToken", access);
         localStorage.setItem("refreshToken", refresh);
 
-        login();
+        login(access,refresh);
 
         toast.success("Login successful!", {
           style: { background: "#4caf50", color: "white" },
