@@ -5,7 +5,7 @@ function Client() {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    fetch("http://51.20.121.157/core/reviews/")
+    fetch("http://13.60.18.142/api/core/reviews/")
       .then((response) => response.json())
       .then((data) => setReviews(data))
       .catch((error) => console.error("Error fetching reviews:", error));

@@ -106,7 +106,7 @@ function Quotation() {
     const token = localStorage.getItem("authToken");
     try {
       const shippingResponse = await axios.post(
-        "http://51.20.121.157/shipping/shipping-request/",
+        "http://13.60.18.142/api/shipping/shipping-request/",
         formData,
         {
           headers: {
@@ -122,7 +122,7 @@ function Quotation() {
         };
 
         const quotationResponse = await axios.post(
-          "http://51.20.121.157/shipping/quotation/",
+          "http://13.60.18.142/api/shipping/quotation/",
           quotationData,
           {
             headers: {

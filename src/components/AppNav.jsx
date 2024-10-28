@@ -22,7 +22,7 @@ function AppNav() {
       }
 
       const res = await axios.post(
-        "http://51.20.121.157/core/token/refresh/",
+        "http://13.60.18.142/api/core/token/refresh/",
         { refresh },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -43,7 +43,7 @@ function AppNav() {
     try {
       if (!authToken || !isAuthenticated) return;
 
-      const res = await axios.get("http://51.20.121.157/core/profile/", {
+      const res = await axios.get("http://13.60.18.142/api/core/profile/", {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },

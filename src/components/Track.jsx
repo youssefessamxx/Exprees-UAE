@@ -37,7 +37,7 @@ function Track() {
       setLocation(null);
       setIsLoading(true);
 
-      const response = await axios.get(`http://51.20.121.157/shipping/track/${trackingNumber}`);
+      const response = await axios.get(`http://13.60.18.142/api/shipping/track/${trackingNumber}`);
       
       if (response.data.error) {
         toast.error("Tracking number not found. Please check and try again.", {

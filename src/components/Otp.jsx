@@ -14,7 +14,7 @@ function Otp() {
 
     try {
       const response = await axios.post(
-        "http://51.20.121.157/core/verify_otp/",
+        "http://13.60.18.142/api/core/verify_otp/",
         formData,
         {
           headers: {

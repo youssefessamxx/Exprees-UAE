@@ -8,7 +8,7 @@ function Services() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("http://51.20.121.157/core/services/");
+        const response = await axios.get("http://13.60.18.142/api/core/services/");
         setServices(response.data);
         setLoading(false);
       } catch (err) {

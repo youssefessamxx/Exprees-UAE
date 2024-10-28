@@ -40,7 +40,7 @@ function Check() {
     setLoading(true);
     setError('');
     setTrackingData(null);
-    const url = `http://51.20.121.157/shipping/track/${trackingNumber}`;
+    const url = `http://13.60.18.142/api/shipping/track/${trackingNumber}`;
 
     try {
       const response = await fetch(url);

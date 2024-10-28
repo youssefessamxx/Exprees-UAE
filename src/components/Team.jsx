@@ -4,7 +4,7 @@ function Team() {
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
-    fetch("http://51.20.121.157/core/team/")
+    fetch("http://13.60.18.142/api/core/team/")
       .then((response) => response.json())
       .then((data) => setTeamMembers(data))
       .catch((error) => console.error("Error fetching team data:", error));

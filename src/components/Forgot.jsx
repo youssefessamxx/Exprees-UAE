@@ -10,7 +10,7 @@ function Forgot() {
 
     try {
       const response = await axios.post(
-        "http://51.20.121.157/core/forget-password/",
+        "http://13.60.18.142/api/core/forget-password/",
         { email },
         {
           headers: {
