@@ -1,38 +1,64 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-function ChangePassword() {
-  const [oldPassword, setOldPassword] = useState("");
+function Forgot() {
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
 
-  const [oldPasswordError, setOldPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [otpError, setOtpError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [changePasswordError, setChangePasswordError] = useState("");
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize navigate
 
-  const handleChangePassword = async (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
+    setEmailError("");
 
-    // Reset errors
-    setOldPasswordError("");
-    setNewPasswordError("");
-    setConfirmPasswordError("");
-    setChangePasswordError("");
-
-    // Validation
-    let hasError = false;
-
-    if (!oldPassword) {
-      setOldPasswordError("Old password is required.");
-      hasError = true;
+    if (!email) {
+      setEmailError("Email is required.");
+      return;
     }
 
-    if (!newPassword) {
-      setNewPasswordError("New password is required.");
+    try {
+      const response = await axios.post(
+        "http://13.60.18.142/api/core/forget-password/",
+        { email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setIsOtpSent(true);
+      }
+    } catch (err) {
+      if (err.response) {
+        setEmailError(err.response.data.detail || "Request failed");
+      } else {
+        setEmailError("No response received from the server.");
+      }
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    setOtpError("");
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+
+    let hasError = false;
+
+    if (!otp) {
+      setOtpError("OTP is required.");
       hasError = true;
     }
 
@@ -43,13 +69,13 @@ function ChangePassword() {
 
     if (hasError) return;
 
-    // API request to change password
     try {
       const response = await axios.post(
-        "http://13.60.18.142/api/core/change-password/",
+        "http://13.60.18.142/api/core/reset-password/",
         {
-          old_password: oldPassword,
-          new_password: newPassword,
+          email,
+          otp,
+          new_password: newPassword
         },
         {
           headers: {
@@ -59,65 +85,129 @@ function ChangePassword() {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Password changed successfully.");
-        navigate("/login"); // Redirect to login page after successful password change
+        setIsOtpSent(false);
+        navigate("/login"); // Redirect to login page on success
       }
     } catch (err) {
-      setChangePasswordError(err.response?.data?.errors?.new_password[0] || "Password change failed.");
+      if (err.response) {
+        const errorDetail = err.response.data.detail || "Request failed";
+        setOtpError(errorDetail);
+      } else {
+        setOtpError("No response received from the server.");
+      }
     }
   };
 
   return (
     <div className='bg-[url("https://res.cloudinary.com/dqsruh1bz/image/upload/v1728660153/login_kofjvl.jpg")] bg-cover bg-center py-9 px-8 md:px-12 h-[70vh]'>
-      <h2 className="text-center font-bold text-[32px] mb-4 text-white">Change Password</h2>
+      <h2 className="text-center font-bold text-[32px] mb-4 text-white">
+        {isOtpSent ? "Reset Password" : "Forgot Password"}
+      </h2>
 
-      <form onSubmit={handleChangePassword} className="flex-grow flex flex-col md:gap-5 gap-3 md:self-center">
-        <div>
-          <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">Old Password</label>
-          <input
-            className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-            type="password"
-            placeholder="Old Password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            required
-          />
-          {oldPasswordError && <p className="text-red-500 text-sm mt-1">{oldPasswordError}</p>}
-        </div>
-        <div>
-          <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">New Password</label>
-          <input
-            className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-          {newPasswordError && <p className="text-red-500 text-sm mt-1">{newPasswordError}</p>}
-        </div>
-        <div>
-          <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">Confirm New Password</label>
-          <input
-            className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-          {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>}
-        </div>
-        <button
-          className="bg-[#F05B1F] md:text-xl font-bold cursor-pointer px-3 py-1 rounded-[8px] lg:py-3 lg:px-7 text-white"
-          type="submit"
-        >
-          Change Password
-        </button>
-        {changePasswordError && <p className="text-red-500 text-sm mt-3">{changePasswordError}</p>}
-      </form>
+      <div className="flex justify-between gap-[200px] lg:w-[50%] mx-auto">
+        {!isOtpSent ? (
+          <form
+            onSubmit={handleForgotPassword}
+            className="flex-grow flex flex-col md:gap-5 gap-3 md:self-center"
+          >
+            <div>
+              <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
+                Email
+              </label>
+              <input
+                className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+            </div>
+            <button
+              className="bg-[#F05B1F] md:text-xl font-bold cursor-pointer px-3 py-1 rounded-[8px] lg:py-3 lg:px-7 text-white"
+              type="submit"
+            >
+              Send
+            </button>
+          </form>
+        ) : (
+          <form
+            onSubmit={handleResetPassword}
+            className="flex-grow flex flex-col md:gap-5 gap-3 md:self-center"
+          >
+            <div>
+              <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
+                Email
+              </label>
+              <input
+                className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+            </div>
+            <div>
+              <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
+                OTP
+              </label>
+              <input
+                className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
+                type="text"
+                placeholder="Enter OTP"
+                name="otp"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+              {otpError && <p className="text-red-500 text-sm mt-1">{otpError}</p>}
+            </div>
+            <div>
+              <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
+                New Password
+              </label>
+              <input
+                className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
+                type="password"
+                placeholder="New Password"
+                name="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+              {newPasswordError && <p className="text-red-500 text-sm mt-1">{newPasswordError}</p>}
+            </div>
+            <div>
+              <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">
+                Confirm New Password
+              </label>
+              <input
+                className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
+                type="password"
+                placeholder="Confirm Password"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>}
+            </div>
+            <button
+              className="bg-[#F05B1F] md:text-xl font-bold cursor-pointer px-3 py-1 rounded-[8px] lg:py-3 lg:px-7 text-white"
+              type="submit"
+            >
+              Reset Password
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
 
-export default ChangePassword;
+export default Forgot;
