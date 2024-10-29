@@ -108,7 +108,7 @@ function AppNav() {
                     to="/reset"
                     className="block px-4 py-2 text-sm hover:bg-gray-100"
                   >
-                   Reset Password
+                   Change Password
                   </Link>
                  
                   <button

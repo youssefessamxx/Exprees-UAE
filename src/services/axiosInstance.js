@@ -1,4 +1,3 @@
-// axiosInstance.js
 import axios from "axios";
 import AuthService from "./authService"; // Assuming AuthService handles token refresh
 import toast from "react-hot-toast";
@@ -12,6 +11,7 @@ const axiosInstance = axios.create({
   },
 });
 
+// Add Authorization header to every request if token exists
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
@@ -23,6 +23,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Refresh token on 401 Unauthorized errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -34,6 +35,7 @@ axiosInstance.interceptors.response.use(
           return axiosInstance(error.config);
         }
       } catch (refreshError) {
+        // Log out if token refresh fails
         toast.error("Session expired. Please log in again.");
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
