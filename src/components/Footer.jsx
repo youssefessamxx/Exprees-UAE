@@ -44,20 +44,20 @@ function Footer() {
         <nav>
           <ul className="flex flex-col gap-3">
             <li>
-              <a href="#">Home</a>
+              <a href="/">Home</a>
             </li>
             <li>
-              <a href="#About">About US</a>
+              <a href="/#About">About US</a>
             </li>
             <li>
-              <a href="#">Services</a>
+              <a href="/#Services">Services</a>
             </li>
             <li>
-              <a href="#">Track</a>
+              <a href="/#Track">Track</a>
             </li>
 
             <li>
-              <a href="#">Contact us</a>
+              <a href="/#Contact">Contact us</a>
             </li>
           </ul>
         </nav>

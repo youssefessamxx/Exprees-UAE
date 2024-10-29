@@ -2,11 +2,13 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 function Register() {
   const navigate = useNavigate();
 
-  // State for form data, password confirmation, error messages, and password visibility
+  // State for form data, password confirmation, and password visibility toggle
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -14,11 +16,17 @@ function Register() {
     password: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Toggle for password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
+  // Handle input changes for each field
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  // Handle phone number change specifically for PhoneInput component
+  const handlePhoneChange = (value) => {
+    setFormData((prevData) => ({ ...prevData, phone_number: value }));
   };
 
   // Form validation function
@@ -48,47 +56,23 @@ function Register() {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    try {
-      const response = await axios.post(
-        "http://13.60.18.142/api/core/register/",
-        formData,
-        { headers: { "Content-Type": "application/json" } }
-      );
+    // Store form data in localStorage instead of sending it immediately
+    localStorage.setItem("pendingRegistration", JSON.stringify(formData));
+    toast.success("Redirecting to OTP verification...");
 
-      if (response.status === 201) {
-        toast.success("Registered successfully! Redirecting to OTP verification...");
-        setTimeout(() => {
-          navigate("/otp");
-        }, 2000); // Redirect after a short delay
-      }
-    } catch (err) {
-      const apiError = err.response?.data;
-      console.error("Full error response:", apiError);
-
-      if (apiError?.errors) {
-        if (apiError.errors.email) {
-          toast.error("A user with this email already exists.");
-        } else if (apiError.errors.phone_number) {
-          toast.error("A user with this phone number already exists.");
-        } else {
-          toast.error("Registration failed due to invalid input.");
-        }
-      } else if (apiError?.message) {
-        toast.error(apiError.message);
-      } else {
-        toast.error("Registration failed. Please try again.");
-      }
-
-      console.error("Error submitting registration:", apiError || err.message);
-    }
+    // Redirect to OTP page after a short delay
+    setTimeout(() => {
+      navigate("/otp");
+    }, 2000);
   };
 
   return (
-    <div className='bg-[url("/public/static/images/register.png")] bg-cover bg-center overflow-x-hidden py-16 px-12'>
+    <div className='bg-[url("/static/images/register.png")] bg-cover bg-center overflow-x-hidden py-16 px-12'>
       <Toaster position="top-center" reverseOrder={false} />
       <h2 className="text-center font-bold text-[42px] mb-8 text-white">Register</h2>
       <form
@@ -116,13 +100,12 @@ function Register() {
             onChange={handleChange}
           />
           <label className="font-semibold text-white text-xl mb-2 block">Phone Number</label>
-          <input
-            className="block px-4 py-2 w-[300px] md:w-[400px] outline-none mb-5"
-            type="text"
-            placeholder="Phone"
-            name="phone_number"
+          <PhoneInput
+            country={"ae"} // UAE as default country
             value={formData.phone_number}
-            onChange={handleChange}
+            onChange={handlePhoneChange}
+            inputStyle={{ width: "100%", padding: "10px" }}
+            containerStyle={{ marginBottom: "20px" }}
           />
         </div>
 
@@ -145,7 +128,6 @@ function Register() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          {/* Show Password Toggle */}
           <div className="mb-5">
             <label className="text-white text-md">
               <input
@@ -158,7 +140,7 @@ function Register() {
           </div>
         </div>
 
-        {/* Submit Button and Error Message */}
+        {/* Submit Button */}
         <div>
           <button
             type="submit"
@@ -170,7 +152,6 @@ function Register() {
             Already have an account?{" "}
             <Link to="/login" className="text-[#F05B1F] font-bold">Log in</Link>
           </p>
-          {/* Remove inline error message as it's replaced with toast notifications */}
         </div>
       </form>
     </div>

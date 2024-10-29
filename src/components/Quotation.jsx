@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import axios from "axios";
 
 function Quotation() {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [brands, setBrands] = useState([]);
   const [formData, setFormData] = useState({
     brand: "",
     model: "",
@@ -22,6 +23,25 @@ function Quotation() {
   const fuelTypes = ["Gasoline", "Diesel", "Electric", "Hybrid"];
   const conditionTypes = ["New", "Used"];
   const years = Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => 1900 + i).reverse();
+
+  useEffect(() => {
+    // Fetch brands from API
+    const fetchBrands = async () => {
+      try {
+        const response = await axios.get("http://13.60.18.142/api/shipping/brands/", {
+          headers: {
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5OTE3MDgxLCJpYXQiOjE3Mjk5MTYxODEsImp0aSI6ImVkOWQ0ZWIwMTIwYTQyZDVhYmY3MWMwZDM2ZjA2MDJlIiwidXNlcl9pZCI6M30.Q_0xwIQKa1haVc8HhFdTkDnWZN-3bUKKW5IPOTYP9Mw",
+          },
+        });
+        setBrands(response.data);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+        setError("Failed to load brands. Please try again later.");
+      }
+    };
+    
+    fetchBrands();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -103,7 +123,6 @@ function Quotation() {
       return;
     }
 
-    const token = localStorage.getItem("authToken");
     try {
       const shippingResponse = await axios.post(
         "http://13.60.18.142/api/shipping/shipping-request/",
@@ -111,7 +130,7 @@ function Quotation() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5OTE3MDgxLCJpYXQiOjE3Mjk5MTYxODEsImp0aSI6ImVkOWQ0ZWIwMTIwYTQyZDVhYmY3MWMwZDM2ZjA2MDJlIiwidXNlcl9pZCI6M30.Q_0xwIQKa1haVc8HhFdTkDnWZN-3bUKKW5IPOTYP9Mw",
           },
         }
       );
@@ -127,7 +146,7 @@ function Quotation() {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+              Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5OTE3MDgxLCJpYXQiOjE3Mjk5MTYxODEsImp0aSI6ImVkOWQ0ZWIwMTIwYTQyZDVhYmY3MWMwZDM2ZjA2MDJlIiwidXNlcl9pZCI6M30.Q_0xwIQKa1haVc8HhFdTkDnWZN-3bUKKW5IPOTYP9Mw",
             },
           }
         );
@@ -155,16 +174,19 @@ function Quotation() {
         </h3>
         <div className="grid grid-cols-1 gap-20 md:grid-cols-2 lg:grid-cols-3 mt-5">
           <div>
-            <label className="font-semibold text-xl mb-2 block">Brand ID</label>
-            <input
+            <label className="font-semibold text-xl mb-2 block">Brand</label>
+            <select
               className="border-[1px] border-[#5f5f5f] block md:px-4 md:py-3 px-3 py-2 w-full mb-5 outline-none font-[600]"
-              type="number"
-              placeholder="Enter brand ID (e.g., 2)"
               name="brand"
               value={formData.brand}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="">Select brand</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>{brand.name}</option>
+              ))}
+            </select>
 
             <label className="font-semibold text-xl mb-2 block">Model</label>
             <input

@@ -1,39 +1,25 @@
-// authService.js
-import axios from 'axios';
-
-const BASE_URL = 'http://51.20.121.157';
+import axiosInstance from "./axiosInstance";
 
 class AuthService {
   static async refreshToken() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) throw new Error("No refresh token available");
+
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        throw new Error('No refresh token available');
-      }
+      const res = await axiosInstance.post("/token/refresh/", { refresh: refreshToken });
 
-      const response = await axios.post(`${BASE_URL}/core/token/refresh/`, {
-        refresh: refreshToken
-      });
-
-      if (response.data.access) {
-        localStorage.setItem('accessToken', response.data.access);
-        return response.data.access;
+      if (res.data.access) {
+        localStorage.setItem("authToken", res.data.access);
+        return res.data.access;
+      } else {
+        throw new Error("Failed to obtain new access token");
       }
     } catch (error) {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      throw new Error('Failed to refresh token');
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
+      throw error;
     }
-  }
-
-  static async getValidToken() {
-    let token = localStorage.getItem('accessToken');
-    
-    if (!token) {
-      token = await this.refreshToken();
-    }
-    
-    return token;
   }
 }
 

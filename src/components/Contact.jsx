@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 function Contact() {
   const [formData, setFormData] = useState({
     full_name: "",
-    phone_number: "", // Removed default +20, as PhoneInput handles it
+    phone_number: "",
     email: "",
     msg: "",
   });
@@ -129,7 +129,6 @@ function Contact() {
               inputProps={{
                 name: 'phone_number',
                 required: true,
-                autoFocus: true,
               }}
             />
           </div>
@@ -151,10 +150,9 @@ function Contact() {
             <label className="font-[500] lg:text-[25px] mb-[2px] block">
               Message
             </label>
-            <input
-              className="block w-full border-[1px] rounded-sm border-black outline-none px-2 py-1 lg:px-4 lg:py-3"
-              type="text"
-              placeholder="Message"
+            <textarea
+              className="block w-full border-[1px] rounded-sm outline-none px-2 py-1 lg:px-4 lg:py-3 min-h-[120px] border-black"
+              placeholder="Enter your message"
               name="msg"
               value={formData.msg}
               onChange={handleChange}

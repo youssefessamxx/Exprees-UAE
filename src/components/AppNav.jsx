@@ -3,16 +3,18 @@ import { IoMenu, IoClose } from "react-icons/io5";
 import logo from "../../public/static/images/logo.png";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/Auth";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 function AppNav() {
   const [showMenu, setShowMenu] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-  const { authToken, isAuthenticated, setAuthToken, login, logout, refreshToken } = useAuth();
+  const { authToken, isAuthenticated, setAuthToken, logout } = useAuth();
 
+  // Get the user's first name and initial for display
   const firstName = userProfile?.full_name?.split(" ")[0] || "";
   const userInitial = userProfile?.full_name?.[0]?.toUpperCase() || "";
 
+  // Function to refresh token
   const refreshTokenFunction = async () => {
     try {
       const refresh = localStorage.getItem("refreshToken");
@@ -21,17 +23,14 @@ function AppNav() {
         return;
       }
 
-      const res = await axios.post(
-        "http://13.60.18.142/api/core/token/refresh/",
-        { refresh },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
+      const res = await axiosInstance.post("/token/refresh/", { refresh });
       const newToken = res.data.access;
+
+      // Update the token in localStorage and state
       localStorage.setItem("authToken", newToken);
       setAuthToken(newToken);
 
-      // Retry fetching profile after refreshing token
+      // Fetch the updated profile
       await fetchProfile();
     } catch (e) {
       console.error("Error refreshing token:", e.message);
@@ -39,14 +38,13 @@ function AppNav() {
     }
   };
 
+  // Fetch the user's profile information
   const fetchProfile = async () => {
     try {
       if (!authToken || !isAuthenticated) return;
 
-      const res = await axios.get("http://13.60.18.142/api/core/profile/", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+      const res = await axiosInstance.get("/profile/", {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       setUserProfile(res.data);
     } catch (e) {
@@ -59,6 +57,8 @@ function AppNav() {
 
   useEffect(() => {
     fetchProfile();
+
+    // Refresh token every 15 minutes
     const refreshInterval = setInterval(refreshTokenFunction, 15 * 60 * 1000);
 
     return () => clearInterval(refreshInterval);
@@ -72,7 +72,7 @@ function AppNav() {
         </a>
 
         <div
-          className={`lg:static lg:min-h-fit lg:w-auto absolute lg:pt-4 pt-12 pb-5 bg-black min-h-[50vh] left-0 ${
+          className={`lg:static lg:min-h-fit lg:w-auto absolute lg:pt-4 pt-12 pb-5 bg-black min-h-[50vh] left-0 transition-all duration-500 ${
             showMenu ? "top-[17%]" : "top-[-100%]"
           } w-full flex items-center px-5`}
         >
@@ -104,8 +104,6 @@ function AppNav() {
               </button>
             </div>
           )}
-
-          <p>En🌐</p>
 
           {showMenu ? (
             <IoClose

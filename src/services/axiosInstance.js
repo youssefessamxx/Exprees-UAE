@@ -1,44 +1,50 @@
-// axiosInstance.js
-import axios from 'axios';
-import AuthService from './authService';
+import axios from "axios";
+import AuthService from "./AuthService";
+import toast from "react-hot-toast";
+
+const baseURL = "http://13.60.18.142/api/core/";
+const refreshEndpoint = `${baseURL}token/refresh/`;
 
 const axiosInstance = axios.create({
-  baseURL: 'http://51.20.121.157',
+  baseURL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
+// Request interceptor to attach access token
 axiosInstance.interceptors.request.use(
-  async (config) => {
-    try {
-      const token = await AuthService.getValidToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    } catch (error) {
-      return Promise.reject(error);
+  (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
+    return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
+// Response interceptor to handle 401 errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const refreshToken = localStorage.getItem("refreshToken");
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Refresh token on 401 errors
+    if (error.response?.status === 401 && refreshToken && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await AuthService.refreshToken();
-        return axiosInstance(originalRequest);
+        const newAccessToken = await AuthService.refreshToken();
+        if (newAccessToken) {
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return axiosInstance(originalRequest);
+        }
       } catch (refreshError) {
-        // Handle refresh token failure (redirect to login, etc.)
-        return Promise.reject(refreshError);
+        toast.error("Session expired. Please log in again.");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);

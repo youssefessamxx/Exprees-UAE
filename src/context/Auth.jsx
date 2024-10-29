@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
+import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -28,7 +29,6 @@ const reducer = (state, action) => {
   }
 };
 
-// eslint-disable-next-line react/prop-types
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -47,6 +47,29 @@ const AuthProvider = ({ children }) => {
     dispatch({ type: "setAuthToken", payload: { authToken } });
   };
 
+  // Refresh token function with error handling
+  const refreshAuthToken = async () => {
+    try {
+      const refresh = state.refreshToken;
+      if (!refresh) {
+        logout();
+        return;
+      }
+
+      const response = await axios.post(
+        "http://13.60.18.142/api/core/token/refresh/",
+        { refresh },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const newToken = response.data.access;
+      setAuthToken(newToken);
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+      logout();
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -56,6 +79,7 @@ const AuthProvider = ({ children }) => {
         login,
         logout,
         setAuthToken,
+        refreshAuthToken,
       }}
     >
       {children}
@@ -65,8 +89,7 @@ const AuthProvider = ({ children }) => {
 
 function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined)
-    throw new Error("AuthContext was used outside AuthProvider");
+  if (context === undefined) throw new Error("AuthContext must be used within an AuthProvider");
   return context;
 }
 

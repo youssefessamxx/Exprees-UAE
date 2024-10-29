@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -7,10 +7,24 @@ function Otp() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const formData = { email, otp };
+
+  useEffect(() => {
+    // Retrieve the email from localStorage if it exists
+    const storedData = JSON.parse(localStorage.getItem("pendingRegistration"));
+    if (storedData?.email) {
+      setEmail(storedData.email);
+    } else {
+      toast.error("No registration data found. Please register again.", {
+        style: { background: "red", color: "white" },
+      });
+      navigate("/register");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = { email, otp };
 
     try {
       const response = await axios.post(
@@ -23,11 +37,11 @@ function Otp() {
         }
       );
 
-      // Handle success
       if (response.status === 200 || response.status === 201) {
         toast.success("OTP verified successfully!", {
           style: { background: "#4caf50", color: "white" },
         });
+        localStorage.removeItem("pendingRegistration"); // Clear pending data after successful verification
         navigate("/login");
       }
     } catch (err) {
@@ -56,11 +70,8 @@ function Otp() {
             <input
               className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
               type="text"
-              placeholder="Email"
-              name="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              readOnly
             />
           </div>
           <div>

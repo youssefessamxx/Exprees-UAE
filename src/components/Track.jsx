@@ -1,38 +1,39 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import toast, { Toaster } from "react-hot-toast";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Define a custom car SVG icon for the map marker
+const carSvgIcon = `
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 11h14l-1.34-4.03A2 2 0 0 0 15.73 5H8.27a2 2 0 0 0-1.93 1.37L5 11ZM7 16a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm10 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM3 9a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v5a2 2 0 0 1-2 2h-1a3 3 0 0 1-5.8 0h-2.4a3 3 0 0 1-5.8 0H4a2 2 0 0 1-2-2V9Z" fill="#F05B1F"/>
+  </svg>
+`;
+
+const carIcon = L.divIcon({
+  html: carSvgIcon,
+  iconSize: [30, 30],
+  className: "custom-svg-icon",
+});
 
 function Track() {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [trackingInfo, setTrackingInfo] = useState(null);
-  const [error, setError] = useState("");
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  
-  // Mock login status check
-  const isLoggedIn = false; // Replace with actual login check, e.g., `const { isLoggedIn } = useContext(AuthContext);`
 
   const handleTrack = async () => {
-    if (!isLoggedIn) {
-      toast.error("Please log in to track your shipment.", {
-        style: { background: "orange", color: "white" },
-      });
-      setTimeout(() => navigate("/login"), 2000); // Redirect to login after 2 seconds
-      return;
-    }
-
     if (!trackingNumber) {
-      setError("Please enter a tracking number.");
+      toast.error("Please enter a tracking number.");
       return;
     }
 
     try {
-      setError("");
       setTrackingInfo(null);
       setLocation(null);
       setIsLoading(true);
@@ -46,9 +47,11 @@ function Track() {
       } else {
         setTrackingInfo(response.data);
         
-        const { latitude, longitude } = response.data.location || {};
-        if (latitude && longitude) {
-          setLocation({ lat: latitude, lng: longitude });
+        // Parse location from the "current_location" field
+        const locationString = response.data.current_location.match(/POINT \(([^ ]+) ([^ ]+)\)/);
+        if (locationString) {
+          const [_, longitude, latitude] = locationString;
+          setLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
         }
       }
     } catch (err) {
@@ -61,21 +64,11 @@ function Track() {
   };
 
   const handleQuotationClick = () => {
-    if (!isLoggedIn) {
-      toast.error("Please log in to access the quotation page.", {
-        style: { background: "orange", color: "white" },
-      });
-      setTimeout(() => navigate("/login"), 2000);
-    } else {
-      navigate("/quotation");
-    }
+    navigate("/quotation");
   };
 
   return (
-    <div
-      id="Track"
-      className="bg-[#1E1E1E] text-white px-4 py-2 text-center md:flex items-center md:py-4"
-    >
+    <div id="Track" className="bg-[#1E1E1E] text-white px-4 py-2 text-center md:flex items-center md:py-4">
       <Toaster position="top-center" reverseOrder={false} />
 
       <button
@@ -84,6 +77,7 @@ function Track() {
       >
         Get Quotation
       </button>
+
       <div className="md:mx-auto flex justify-center md:gap-1 gap-0">
         <input
           className="font-bold font-sans text-md px-8 py-1 rounded-[8px] mr-3 outline-none text-black lg:w-[500px] lg:py-3"
@@ -103,29 +97,25 @@ function Track() {
         </button>
       </div>
 
-      {/* Display error message */}
-      {error && <p className="text-red-500 mt-4">{error}</p>}
-
       {/* Display tracking information */}
-      {trackingInfo && (
+      {trackingInfo && location && (
         <div className="mt-4">
           <h3 className="font-semibold">Tracking Information:</h3>
           <p>Status: {trackingInfo.status}</p>
-          <p>Estimated Delivery: {trackingInfo.estimatedDelivery}</p>
-          <p>Location: {trackingInfo.location?.description || "Not available"}</p>
+          <p>Location: {location.lat}, {location.lng}</p>
 
-          {/* Display map if location data is available */}
-          {location && (
-            <MapContainer center={location} zoom={13} style={{ height: "400px", width: "100%" }} className="mt-4">
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-              />
-              <Marker position={location}>
-                <Popup>Car Location</Popup>
-              </Marker>
-            </MapContainer>
-          )}
+          {/* Display map with marker */}
+          <MapContainer center={location} zoom={13} style={{ height: "400px", width: "100%" }} className="mt-4">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+            />
+            <Marker position={location} icon={carIcon}>
+              <Popup>
+                Status: {trackingInfo.status}
+              </Popup>
+            </Marker>
+          </MapContainer>
         </div>
       )}
     </div>
