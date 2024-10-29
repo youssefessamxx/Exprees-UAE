@@ -8,13 +8,12 @@ import axiosInstance from "../services/axiosInstance";
 function AppNav() {
   const [showMenu, setShowMenu] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const { authToken, isAuthenticated, setAuthToken, logout } = useAuth();
 
-  // Get the user's first name and initial for display
-  const firstName = userProfile?.full_name?.split(" ")[0] || "";
-  const userInitial = userProfile?.full_name?.[0]?.toUpperCase() || "";
+  const firstName = userProfile?.full_name?.split(" ")[0] || "User";
+  const userInitial = userProfile?.full_name?.[0]?.toUpperCase() || "U";
 
-  // Function to refresh token
   const refreshTokenFunction = async () => {
     try {
       const refresh = localStorage.getItem("refreshToken");
@@ -23,14 +22,12 @@ function AppNav() {
         return;
       }
 
-      const res = await axiosInstance.post("/token/refresh/", { refresh });
+      const res = await axiosInstance.post("http://13.60.18.142/api/core/token/refresh", { refresh });
       const newToken = res.data.access;
 
-      // Update the token in localStorage and state
       localStorage.setItem("authToken", newToken);
       setAuthToken(newToken);
 
-      // Fetch the updated profile
       await fetchProfile();
     } catch (e) {
       console.error("Error refreshing token:", e.message);
@@ -38,12 +35,11 @@ function AppNav() {
     }
   };
 
-  // Fetch the user's profile information
   const fetchProfile = async () => {
     try {
       if (!authToken || !isAuthenticated) return;
 
-      const res = await axiosInstance.get("/profile/", {
+      const res = await axiosInstance.get("http://13.60.18.142/api/core/profile/", {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setUserProfile(res.data);
@@ -58,9 +54,7 @@ function AppNav() {
   useEffect(() => {
     fetchProfile();
 
-    // Refresh token every 15 minutes
     const refreshInterval = setInterval(refreshTokenFunction, 15 * 60 * 1000);
-
     return () => clearInterval(refreshInterval);
   }, [isAuthenticated, authToken]);
 
@@ -93,15 +87,41 @@ function AppNav() {
               <Link className="hover:text-gray-400 transition duration-300" to="/register">Register</Link>
             </div>
           ) : (
-            <div className="flex gap-3 items-center">
-              <p className="bg-[#F05B1F] p-1 rounded-full">{userInitial}</p>
-              <p>{firstName || "User"}</p>
-              <button 
-                className="bg-[#F05B1F] p-1 rounded"
-                onClick={() => logout()}
+            <div className="relative">
+              <div
+                className="flex gap-3 items-center cursor-pointer"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
               >
-                Logout
-              </button>
+                <p className="bg-[#F05B1F] p-1 rounded-full">{userInitial}</p>
+                <p>{firstName}</p>
+              </div>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white text-black shadow-md rounded">
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/reset"
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                   Reset Password
+                  </Link>
+                 
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      logout();
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

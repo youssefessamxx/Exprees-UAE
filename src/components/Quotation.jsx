@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import Modal from "./Modal";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 function Quotation() {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [brands, setBrands] = useState([]);
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
+  const [isAuthenticated, setIsAuthenticated] = useState(!!authToken);
   const [formData, setFormData] = useState({
     brand: "",
     model: "",
@@ -24,24 +26,19 @@ function Quotation() {
   const conditionTypes = ["New", "Used"];
   const years = Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => 1900 + i).reverse();
 
-  useEffect(() => {
-    // Fetch brands from API
-    const fetchBrands = async () => {
-      try {
-        const response = await axios.get("http://13.60.18.142/api/shipping/brands/", {
-          headers: {
-            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5OTE3MDgxLCJpYXQiOjE3Mjk5MTYxODEsImp0aSI6ImVkOWQ0ZWIwMTIwYTQyZDVhYmY3MWMwZDM2ZjA2MDJlIiwidXNlcl9pZCI6M30.Q_0xwIQKa1haVc8HhFdTkDnWZN-3bUKKW5IPOTYP9Mw",
-          },
-        });
-        setBrands(response.data);
-      } catch (error) {
-        console.error("Error fetching brands:", error);
-        setError("Failed to load brands. Please try again later.");
-      }
-    };
-    
-    fetchBrands();
-  }, []);
+  const fetchBrands = async () => {
+    try {
+      if (!authToken || !isAuthenticated) return;
+
+      const res = await axiosInstance.get("http://13.60.18.142/api/shipping/brands/", {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setBrands(res.data);
+    } catch (e) {
+      console.error("Error fetching brands:", e.message);
+      setError("Failed to load brands. Please try again later.");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,43 +121,30 @@ function Quotation() {
     }
 
     try {
-      const shippingResponse = await axios.post(
+      const response = await axiosInstance.post(
         "http://13.60.18.142/api/shipping/shipping-request/",
         formData,
         {
           headers: {
+            Authorization: `Bearer ${authToken}`,
             "Content-Type": "application/json",
-            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5OTE3MDgxLCJpYXQiOjE3Mjk5MTYxODEsImp0aSI6ImVkOWQ0ZWIwMTIwYTQyZDVhYmY3MWMwZDM2ZjA2MDJlIiwidXNlcl9pZCI6M30.Q_0xwIQKa1haVc8HhFdTkDnWZN-3bUKKW5IPOTYP9Mw",
           },
         }
       );
 
-      if (shippingResponse.status === 201) {
-        const quotationData = {
-          shipping_request: shippingResponse.data.id,
-        };
-
-        const quotationResponse = await axios.post(
-          "http://13.60.18.142/api/shipping/quotation/",
-          quotationData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5OTE3MDgxLCJpYXQiOjE3Mjk5MTYxODEsImp0aSI6ImVkOWQ0ZWIwMTIwYTQyZDVhYmY3MWMwZDM2ZjA2MDJlIiwidXNlcl9pZCI6M30.Q_0xwIQKa1haVc8HhFdTkDnWZN-3bUKKW5IPOTYP9Mw",
-            },
-          }
-        );
-
-        if (quotationResponse.status === 201) {
-          setShowModal(true);
-          handleCancel();
-        }
+      if (response.status === 201) {
+        setShowModal(true);
+        handleCancel();
       }
     } catch (err) {
       console.error("Error submitting quotation:", err);
-      setError(err.response?.data?.message || "Quotation submission failed. Please try again.");
+      setError(err.response?.data?.detail || "Quotation submission failed. Please try again.");
     }
   };
+
+  useEffect(() => {
+    fetchBrands();
+  }, [authToken, isAuthenticated]);
 
   return (
     <div>
@@ -222,6 +206,7 @@ function Quotation() {
               required
             />
           </div>
+
           <div>
             <label className="font-semibold text-xl mb-2 block">Engine Capacity</label>
             <input
@@ -256,7 +241,7 @@ function Quotation() {
               required
             >
               <option value="">Select manufacturing year</option>
-              {years.map(year => (
+              {years.map((year) => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
@@ -275,6 +260,7 @@ function Quotation() {
               ))}
             </select>
           </div>
+
           <div>
             <label className="font-semibold text-xl mb-2 block">Fuel Type</label>
             <select
@@ -305,6 +291,7 @@ function Quotation() {
             </select>
           </div>
         </div>
+
         <div className="flex justify-end gap-2">
           <button
             type="button"
@@ -320,9 +307,10 @@ function Quotation() {
             Send
           </button>
         </div>
+
         {error && <p className="text-red-500 mt-4">{error}</p>}
+        {showModal && <p className="text-green-500 mt-4">Thank you for contacting us. One of our customer support representatives will get in touch with you soon.</p>}
       </form>
-      {showModal && <Modal setShowModal={setShowModal} />}
     </div>
   );
 }

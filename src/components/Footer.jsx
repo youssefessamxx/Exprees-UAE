@@ -82,7 +82,7 @@ function Footer() {
           </li>
         </ul>
       </div>
-      <div>
+      {/* <div>
         <h2 className="font-bold text-[25px] mb-1">Download the app by :</h2>
         <span className="h-[1px] w-[100px] bg-[#F05B1F] md:mx-0 mx-auto mb-3 block"></span>
         <img
@@ -95,7 +95,7 @@ function Footer() {
           className="mb-4 mx-auto md:mx-0 "
           alt=""
         />
-      </div>
+      </div> */}
     </div>
   );
 }

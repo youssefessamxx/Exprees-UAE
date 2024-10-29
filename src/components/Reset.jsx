@@ -6,6 +6,7 @@ function ChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
 
   const [oldPasswordError, setOldPasswordError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
@@ -63,7 +64,11 @@ function ChangePassword() {
         navigate("/login"); // Redirect to login page after successful password change
       }
     } catch (err) {
-      setChangePasswordError(err.response?.data?.errors?.new_password[0] || "Password change failed.");
+      setChangePasswordError(
+        err.response?.data?.errors?.new_password?.[0] || 
+        err.response?.data?.detail || 
+        "Password change failed."
+      );
     }
   };
 
@@ -76,7 +81,7 @@ function ChangePassword() {
           <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">Old Password</label>
           <input
             className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-            type="password"
+            type={showPassword ? "text" : "password"} // Toggle input type
             placeholder="Old Password"
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
@@ -88,7 +93,7 @@ function ChangePassword() {
           <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">New Password</label>
           <input
             className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-            type="password"
+            type={showPassword ? "text" : "password"} // Toggle input type
             placeholder="New Password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -100,7 +105,7 @@ function ChangePassword() {
           <label className="font-[500] lg:text-[25px] mb-[2px] block text-white">Confirm New Password</label>
           <input
             className="border-[1px] border-black block md:px-4 md:py-3 px-3 py-2 mx-auto outline-none w-full"
-            type="password"
+            type={showPassword ? "text" : "password"} // Toggle input type
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -108,6 +113,18 @@ function ChangePassword() {
           />
           {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>}
         </div>
+
+        <div className="flex items-center mt-2">
+          <input
+            type="checkbox"
+            id="showPassword"
+            checked={showPassword}
+            onChange={() => setShowPassword(!showPassword)}
+            className="mr-2"
+          />
+          <label htmlFor="showPassword" className="text-white">Show Password</label>
+        </div>
+
         <button
           className="bg-[#F05B1F] md:text-xl font-bold cursor-pointer px-3 py-1 rounded-[8px] lg:py-3 lg:px-7 text-white"
           type="submit"

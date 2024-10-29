@@ -9,6 +9,7 @@ import QuotationPage from "./pages/QuotationPage";
 import { AuthProvider } from "./context/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import OtpPage from "./pages/OtpPage";
+import Reset from "./pages/Reset";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/quotation" element={<QuotationPage />} />
             <Route path="/forgot" element={<ForgotPassword />} />
             <Route path="/otp" element={<OtpPage />} />
+            <Route path="/reset" element={<Reset/>} />
           </Routes>
         </Suspense>
       </BrowserRouter>
